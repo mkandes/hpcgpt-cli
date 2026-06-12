@@ -45,10 +45,10 @@ def parse_args():
 
 
 def get_client():
-    base_url = os.environ.get("NCSA_LLM_URL")
-    api_key = os.environ.get("ILLINOIS_CHAT_API_KEY")
+    base_url = os.environ.get("TRITON_AI_LLM_URL")
+    api_key = os.environ.get("TRITON_AI_API_KEY")
     if not base_url or not api_key:
-        raise EnvironmentError("NCSA_LLM_URL and ILLINOIS_CHAT_API_KEY must be set.")
+        raise EnvironmentError("TRITON_AI_LLM_URL and TRITON_AI_API_KEY must be set.")
     return OpenAI(base_url=base_url, api_key=api_key)
 
 
@@ -59,8 +59,9 @@ def generate_clusters(client, topic_labels: dict) -> dict:
 
     print(f"Asking LLM to cluster {len(unique_topics)} unique topic keys...")
 
+    model_name = os.environ.get("TRITON_AI_MODEL_NAME")
     response = client.chat.completions.create(
-        model="Qwen/Qwen3-VL-32B-Instruct",
+        model=model_name,
         max_tokens=4000,
         temperature=0.2,
         messages=[
@@ -71,10 +72,10 @@ def generate_clusters(client, topic_labels: dict) -> dict:
 
     content = response.choices[0].message.content.strip()
     content = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL).strip()
-
     content = re.sub(r"```json|```", "", content).strip()
 
     data = json.loads(content)
+
     return data["clusters"]
 
 
@@ -90,8 +91,9 @@ def build_topic_to_cluster(clusters: dict) -> dict:
 def assign_cluster_fallback(client, qa_content: str, cluster_names: list) -> str:
     """Fallback: ask LLM to assign a Q/A directly to a cluster if its topic wasn't in the map."""
     cluster_list = "\n".join(cluster_names)
+    model_name = os.environ.get("TRITON_AI_MODEL_NAME")
     response = client.chat.completions.create(
-        model="Qwen/Qwen3-VL-32B-Instruct",
+        model=model_name,
         max_tokens=20,
         temperature=0.0,
         messages=[

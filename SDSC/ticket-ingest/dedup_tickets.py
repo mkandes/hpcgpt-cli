@@ -46,20 +46,23 @@ Deduplication Intent:
 Good vs Bad Examples:
 
 Q: How do I request an A100 GPU for my job?
-A: Use the gpuA100x4 partition in your sbatch script...
+A: You cannot. The A100 GPUs on Expanse are not publicly available. 
 Output: request-gpu-node-slurm
 
 Q: My sbatch job is stuck in pending state due to resources
+A: In Slurm, the Resources reason code indicates your pending job is waiting in line because the specific nodes, CPUs, GPUs, or memory you requested are currently unavailable. Your job will automatically begin running as soon as the active jobs holding those resources finish and your job reaches the front of the queue.
 Output: slurm-job-pending-resources
 
 Q: How do I load Python 3.10 on the cluster?
+A: There is no software module of Python 3.10 on Expanse. You may want to consider installing miniforge in your HOME directory to create your own custom Python environment.
 Output: load-python-module
 
 Q: My job crashes with out-of-memory error
+A: Are you able to increase the amount of CPU memory in your job request?
 Output: job-out-of-memory-error
 
 Bad Outputs (avoid):
-- too specific: "request-a100-gpu-on-delta-cluster"
+- too specific: "request-a100-gpu-on-expanse-cluster"
 - too vague: "job-issue"
 - wrong format: "Request GPU Node Slurm"
 - includes explanation: "request-gpu-node-slurm because user asked about GPUs"

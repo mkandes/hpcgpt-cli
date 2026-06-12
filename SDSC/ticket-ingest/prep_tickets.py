@@ -6,7 +6,7 @@ import pandas as pd
 
 SYSTEM_PROMPT = """\
 You are an expert HPC (High Performance Computing) support assistant.
-You will be given a support ticket including its title, description, and any comments from the support thread.
+You will be given a support ticket including its subject, description, and any comments from the support thread.
 
 Your task is to summarize the ticket as a single question-and-answer pair:
 - The "Q" (Question) should concisely capture the user's core issue or request, written as a natural question a user might ask.
@@ -15,7 +15,7 @@ Your task is to summarize the ticket as a single question-and-answer pair:
 Keep each part to 1–6 sentences. Do not include any extra formatting or commentary — output only the Q and A. When creating the Q and A provide responses that can be generalized to any user and do not reference any specific user or project.
 Do not include any personal identifiable information (PII) in the response. PII includes names, email addresses, project identifiers, and any other information that could be used to identify a specific user or project.
 
-If using an example project name or code in the response, use XXXX or delta-XXXX-gpu placeholder or XXXYYYYYY for access project codes
+If using an example project name or code in the response, use abc123 as a placeholder for a local SDSC allocation ID or XXXYYYYYY for an ACCESS Grant Number.
 Do not include any information on whether the specfic ticket was closed or not. 
 Do not include ticket ids in the response.
 
@@ -25,7 +25,7 @@ A: <the resolution or guidance provided>
 """
 
 def parse_command_line() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Summarize Jira tickets")
+    p = argparse.ArgumentParser(description="Summarize Zendesk tickets")
     p.add_argument('-i', '--input', 
                     required=True,
                     type=str, 
@@ -44,7 +44,7 @@ def prep_ticket(row: pd.Series) -> str:
         A string containing the user text for the ticket.
     """
     ticket_data = f"---\n"
-    ticket_data += f"Title: {row['Summary']}\n"
+    ticket_data += f"Subject: {row['Summary']}\n"
     ticket_data += f"Description: {row['Description']}\n"
     ticket_data += f"Comments:\n"
     if pd.notnull(row["Comment"]):
