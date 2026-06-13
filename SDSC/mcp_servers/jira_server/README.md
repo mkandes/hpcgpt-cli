@@ -69,7 +69,7 @@ Top-level fields:
 
 ## Run
 
-From `NCSA/mcp_servers/report_server`:
+From `SDSC/mcp_servers/jira_server`:
 
 ```bash
 python server.py
@@ -85,7 +85,7 @@ Useful flags:
 ## Project layout
 
 ```text
-report_server/
+jira_server/
 ├── server.py              # CLI entrypoint and startup behavior
 ├── requirements.txt       # Python dependencies
 ├── example.config.json    # Config template

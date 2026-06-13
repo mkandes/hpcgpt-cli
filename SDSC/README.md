@@ -5,13 +5,13 @@
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
 ![Tech](https://img.shields.io/badge/AI-Opencode%20Agent%20%7C%20MCP%20Servers%20%7C%20Slurm%20%7C%20Illinois%20Chat%20%7C%20Atlassian-blueviolet)
 
-This directory contains the NCSA deployment of hpcGPT. It integrates Model Context Protocol (MCP) servers for Slurm-based HPC environments, Illinois Chat documentation Q&A, and support reporting.
+This directory contains the SDSC deployment of hpcGPT. It integrates Model Context Protocol (MCP) servers for Slurm-based HPC environments, Triton AI documentation Q&A, and support reporting.
 
 ## TL;DR - Getting Started
 
 ```bash
 curl -fsSL https://opencode.ai/install | bash
-export OPENCODE_CONFIG=/absolute/path/to/this/repo/NCSA/opencode.jsonc
+export OPENCODE_CONFIG=/absolute/path/to/this/repo/SDSC/opencode.jsonc
 opencode
 ```
 
@@ -20,9 +20,9 @@ Set environment variables as needed (see Env section below), then pick a model a
 ## Features
 
 - Slurm integration (MCP): `accounts`, `sinfo`, `squeue`, and `scontrol` via `slurm-mcp-server`.
-- Docs Q&A (MCP): Illinois Chat tools `query_delta_documentation`, `query_delta_ai_documentation`.
-- Support reporting (MCP): `send_support_report` via `report-server`.
-- Provider setup: NCSA Hosted provider configured in `opencode.jsonc`.
+- Docs Q&A (MCP): Triton AI tools `query_expanse_documentation`, `query_expanse_ai_documentation`.
+- Support reporting (MCP): `send_support_report` via `jira-server`.
+- Provider setup: SDSC Hosted provider configured in `opencode.jsonc`.
 - Config-driven: Everything wired through `opencode.jsonc` for reproducibility.
 
 ## System Architecture
@@ -31,13 +31,13 @@ Set environment variables as needed (see Env section below), then pick a model a
 graph TD
   U[User] -->|TUI| OC[Opencode Agent]
 
-  OC --> P1[NCSA Hosted Provider]
-  OC --> P2[NCSA Ollama Provider]
+  OC --> P1[SDSC Hosted Provider]
+  OC --> P2[SDSC Ollama Provider]
 
   subgraph MCP_Servers
     M1[slurm-mcp-server]
-    M2[illinois-chat-server]
-    M3[report-server]
+    M2[triton-ai-server]
+    M3[jira-server]
   end
 
   OC -. tools .-> M1
@@ -45,31 +45,31 @@ graph TD
   OC -. tools .-> M3
 
   M1 --> SLURM[Slurm CLI]
-  M2 --> ICHAT[Illinois Chat API]
+  M2 --> TRITON[Triton AI API]
   M3 --> JIRA[Jira]
-  M3 --> SUPPORT[Delta Support]
+  M3 --> SUPPORT[Expanse Support]
 ```
 
 ### How things fit together
 
-- Opencode reads `NCSA/opencode.jsonc` for providers, models, and MCP servers.
+- Opencode reads `SDSC/opencode.jsonc` for providers, models, and MCP servers.
 - MCP servers expose tools over stdio; the agent calls them when the model chooses a tool.
 - `slurm-mcp-server` shells out to local Slurm commands.
-- `illinois-chat-server` calls the Illinois Chat API to answer questions from Delta/Delta AI docs.
-- `report-server` creates Jira support tickets with session context.
+- `triton-ai-server` calls the Triton AI API to answer questions from Expanse/Expanse AI docs.
+- `jira-server` creates Jira support tickets with session context.
 
 ## Project Structure
 
 ```text
-NCSA/
+SDSC/
   mcp_servers/
-    illinois_chat_server/
+    triton_ai_server/
       server.py
       requirements.txt
     slurm_server/
       server.py
       requirements.txt
-    report_server/
+    jira_server/
       server.py
       requirements.txt
   prompts/
@@ -87,27 +87,27 @@ NCSA/
   - Tools: `accounts`, `sinfo`, `squeue`, `scontrol`
   - Purpose: query accounts, node/partition status, user jobs, and job details.
 
-- illinois-chat-mcp (local)
-  - Tools: `query_delta_documentation`, `query_delta_ai_documentation`
-  - Purpose: answer questions from Delta and Delta AI documentation.
+- triton-ai-mcp (local)
+  - Tools: `query_expanse_documentation`, `query_expanse_ai_documentation`
+  - Purpose: answer questions from Expanse and Expanse AI documentation.
 
-- report-server (local)
+- jira-server (local)
   - Tools: `send_support_report`
   - Purpose: create Jira support issues with conversation history and host/user context.
 
 ## Installation
 
-Install Opencode and point it at the NCSA config:
+Install Opencode and point it at the SDSC config:
 
 ```bash
 curl -fsSL https://opencode.ai/install | bash
-export OPENCODE_CONFIG=/absolute/path/to/this/repo/NCSA/opencode.jsonc
+export OPENCODE_CONFIG=/absolute/path/to/this/repo/SDSC/opencode.jsonc
 opencode
 ```
 
 ### Optional: Local MCP server setup
 
-MCP servers in `NCSA/mcp_servers/*` are Python services. From each server directory:
+MCP servers in `SDSC/mcp_servers/*` are Python services. From each server directory:
 
 ```bash
 python -m venv .venv
@@ -116,32 +116,32 @@ pip install -r requirements.txt
 python server.py
 ```
 
-Or run them as configured remote MCP endpoints from the `NCSA/opencode.jsonc` `mcp` section.
+Or run them as configured remote MCP endpoints from the `SDSC/opencode.jsonc` `mcp` section.
 
 ## Environment Configuration
 
-Use `NCSA/example.env` as a reference and export values in your shell or `.env`.
+Use `SDSC/example.env` as a reference and export values in your shell or `.env`.
 
 ### Core variables
 
-- `NCSA_LLM_URL` - Base URL for NCSA Hosted models provider
-- Illinois Chat and report server credentials are configured in each server's `config.json` (see `NCSA/mcp_servers/illinois_chat_server/example.config.json` and `NCSA/mcp_servers/report_server/example.config.json`).
+- `TRITON_AI_LLM_URL` - Base URL for SDSC Hosted models provider
+- Triton AI and report server credentials are configured in each server's `config.json` (see `SDSC/mcp_servers/triton_ai_server/example.config.json` and `SDSC/mcp_servers/jira_server/example.config.json`).
 
 ## Usage Examples
 
-Inside the Opencode TUI, pick a model (e.g., `ncsahosted/Qwen/Qwen3-VL-32B-Instruct`) and ask the assistant to use tools.
+Inside the Opencode TUI, pick a model (e.g., `api-gemma-4-26b`) and ask the assistant to use tools.
 
 ### Slurm status
 
-"Check the Delta GPU partitions and my running jobs."
+"Check the Expanse GPU partitions and my running jobs."
 
 The assistant will call `sinfo` and `squeue` via `slurm-mcp-server`.
 
-### Delta/Delta AI docs Q&A
+### Expanse/Expanse AI docs Q&A
 
-"How do I submit a Slurm job on Delta?"
+"How do I submit a Slurm job on Expanse?"
 
-The assistant will call `query_delta_documentation` with your question and return a synthesized answer.
+The assistant will call `query_expanse_documentation` with your question and return a synthesized answer.
 
 ### File a support report
 
@@ -149,19 +149,19 @@ Run the `report` command in Opencode. This uses `send_support_report` to create 
 
 ## Configuration Reference
 
-See `NCSA/opencode.jsonc` for providers, models, and MCP server commands. Example provider entries:
+See `SDSC/opencode.jsonc` for providers, models, and MCP server commands. Example provider entries:
 
 ```json
 {
   "provider": {
-    "ncsahosted": {
+    "triton-ai": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "my_provider_name",
       "options": {
         "baseURL": "{env:my_url}"
       },
       "models": {
-        "Qwen/Qwen3-VL-32B-Instruct": {
+        "api-gemma-4-26b": {
           "name": "my_model_name",
           "options": {
             "stream": true
@@ -175,8 +175,8 @@ See `NCSA/opencode.jsonc` for providers, models, and MCP server commands. Exampl
 
 ## Links
 
-- Delta Chatbot: `https://uiuc.chat/Delta-Documentation` (course: Delta-Documentation)
-- Delta AI Chatbot: `https://uiuc.chat/DeltaAI-Documentation` (course: DeltaAI-Documentation)
+- Expanse Chatbot: `https://sdsc.chat/Expanse-Documentation` (course: Expanse-Documentation)
+- Expanse AI Chatbot: `https://sdsc.chat/ExpanseAI-Documentation` (course: ExpanseAI-Documentation)
 
 ## License
 
