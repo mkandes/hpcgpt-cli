@@ -7,26 +7,26 @@ DEFAULT_SYSTEM_PROMPT = (
 
 class Config(BaseModel):
     host: str = Field(
-        default="0.0.0.0", 
+        default="127.0.0.1", 
         description="The host ip address for the server to listen on")
     port: int = Field(
-        default=8000, 
+        default=8001, 
         description="The port for the server to listen on")
     log_file: str = Field(
         default="logs/Latest.log", 
         description="The file to write server logs to")
-    illinois_chat_url: str = Field(
-        description="The URL of the Illinois Chat API, can also be set with the ILLINOIS_CHAT_URL environment variable",
-        json_schema_extra={"env": "ILLINOIS_CHAT_URL"})
-    illinois_chat_api_key: str = Field(
-        description="API key for the Illinois Chat API, can also be set with the ILLINOIS_CHAT_API_KEY environment variable",
-        json_schema_extra={"env": "ILLINOIS_CHAT_API_KEY"})
-    illinois_chat_model: str = Field(
-        description="The model to use for the Illinois Chat API, can also be set with the ILLINOIS_CHAT_MODEL environment variable",
-        json_schema_extra={"env": "ILLINOIS_CHAT_MODEL"})
-    illinois_chat_system_prompt: str = Field(
+    triton_ai_url: str = Field(
+        description="The URL of the Triton AI API, can also be set with the TRITON_AI_URL environment variable",
+        json_schema_extra={"env": "TRITON_AI_URL"})
+    triton_ai_api_key: str = Field(
+        description="API key for the Triton AI API, can also be set with the TRITON_AI_API_KEY environment variable",
+        json_schema_extra={"env": "TRITON_AI_API_KEY"})
+    triton_ai_model: str = Field(
+        description="The model to use for the Triton AI API, can also be set with the TRITON_AI_MODEL environment variable",
+        json_schema_extra={"env": "TRITON_AI_MODEL"})
+    triton_ai_system_prompt: str = Field(
         default=DEFAULT_SYSTEM_PROMPT,
-        description="System message prepended to each Illinois Chat API request",
+        description="System message prepended to each Triton AI API request",
     )
 
     @classmethod

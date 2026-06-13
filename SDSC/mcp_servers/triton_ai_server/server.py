@@ -9,40 +9,40 @@ from src.logging import route_fastmcp_logs_to_root, setup_logging
 
 class ChatMCP(FastMCP):
     """
-    Illinois Chat documentation MCP server.
+    Triton AI documentation MCP server.
     """
 
     def __init__(self, name: str, args: argparse.Namespace):
         super().__init__(name)
-        self.illinois_chat_url = args.illinois_chat_url
-        self.illinois_chat_api_key = args.illinois_chat_api_key
-        self.illinois_chat_model = args.illinois_chat_model
-        self.illinois_chat_system_prompt = args.illinois_chat_system_prompt
+        self.triton_ai_url = args.triton_ai_url
+        self.triton_ai_api_key = args.triton_ai_api_key
+        self.triton_ai_model = args.triton_ai_model
+        self.triton_ai_system_prompt = args.triton_ai_system_prompt
 
-        self.add_tool(self.query_delta_documentation)
-        self.add_tool(self.query_delta_ai_documentation)
+        self.add_tool(self.query_expanse_documentation)
+        self.add_tool(self.query_expanse_ai_documentation)
 
-    async def _send_request_to_illinois_chat(self, course_name: str, query: str) -> str:
+    async def _send_request_to_triton_ai(self, course_name: str, query: str) -> str:
         request_data = {
-            "model": self.illinois_chat_model,
+            "model": self.triton_ai_model,
             "messages": [
-                {"role": "system", "content": self.illinois_chat_system_prompt},
+                {"role": "system", "content": self.triton_ai_system_prompt},
                 {"role": "user", "content": query},
             ],
-            "api_key": self.illinois_chat_api_key,
+            "api_key": self.triton_ai_api_key,
             "course_name": course_name,
             "stream": False,
             "temperature": 0.3,
             "retrieval_only": False,
         }
-        response = requests.post(self.illinois_chat_url, json=request_data)
+        response = requests.post(self.triton_ai_url, json=request_data)
         if response.status_code != 200:
             raise RuntimeError(
-                f"Failed to send request to Illinois Chat API: "
+                f"Failed to send request to Triton AI API: "
                 f"{response.status_code} {response.text}"
             )
         data = response.json()
-        logging.info("Illinois Chat API Response: %s", data)
+        logging.info("Triton AI API Response: %s", data)
         if "message" in data:
             return data["message"]
         if (
@@ -56,29 +56,29 @@ class ChatMCP(FastMCP):
             return data["response"]
         raise RuntimeError(f"Unexpected response format: {data}")
 
-    async def query_delta_documentation(self, query: str) -> str:
+    async def query_expanse_documentation(self, query: str) -> str:
         """
-        Query the Delta documentation with the given query and return the output.
+        Query the Expanse documentation with the given query and return the output.
 
         Args:
-            query: The query to pass to the delta-docs command.
+            query: The query to pass to the expanse-docs command.
 
         Returns:
-            The output of the delta-docs command.
+            The output of the expanse-docs command.
         """
-        return await self._send_request_to_illinois_chat("Delta-Documentation", query)
+        return await self._send_request_to_triton_ai("Expanse-Documentation", query)
 
-    async def query_delta_ai_documentation(self, query: str) -> str:
+    async def query_expanse_ai_documentation(self, query: str) -> str:
         """
-        Query the Delta AI documentation with the given query and return the output.
+        Query the Expanse AI documentation with the given query and return the output.
 
         Args:
-            query: The query to pass to the delta-ai-docs command.
+            query: The query to pass to the expanse-ai-docs command.
 
         Returns:
-            The output of the delta-ai-docs command.
+            The output of the expanse-ai-docs command.
         """
-        return await self._send_request_to_illinois_chat("DeltaAI-Documentation", query)
+        return await self._send_request_to_triton_ai("ExpanseAI-Documentation", query)
 
     def verify_chat_connection(self, timeout: float = 30) -> None:
         """
@@ -89,54 +89,54 @@ class ChatMCP(FastMCP):
         """
         verification_prompt = "This is a test message to verify the connection to the chat API is valid. Please respond with a simple message saying 'Hello, world!'."
         payload = {
-            "model": self.illinois_chat_model,
+            "model": self.triton_ai_model,
             "messages": [
-                {"role": "system", "content": self.illinois_chat_system_prompt},
+                {"role": "system", "content": self.triton_ai_system_prompt},
                 {"role": "user", "content": verification_prompt},
             ],
-            "api_key": self.illinois_chat_api_key,
-            "course_name": "Delta-Documentation",
+            "api_key": self.triton_ai_api_key,
+            "course_name": "Expanse-Documentation",
             "stream": False,
             "temperature": 0.3,
             "retrieval_only": True,
         }
         try:
             response = requests.post(
-                self.illinois_chat_url,
+                self.triton_ai_url,
                 json=payload,
                 timeout=timeout,
             )
         except requests.RequestException as exc:
             raise RuntimeError(
-                f"Illinois Chat URL is unreachable or invalid: {exc}"
+                f"Triton AI URL is unreachable or invalid: {exc}"
             ) from exc
 
         if response.status_code in (401, 403):
             raise RuntimeError(
-                f"Illinois Chat API rejected the API key (HTTP {response.status_code})."
+                f"Triton AI API rejected the API key (HTTP {response.status_code})."
             )
         if response.status_code == 404:
             raise RuntimeError(
-                "Illinois Chat API returned HTTP 404; check illinois_chat_url."
+                "Triton AI API returned HTTP 404; check triton_ai_url."
             )
         if response.status_code != 200:
             snippet = (response.text or "")[:500]
             raise RuntimeError(
-                f"Illinois Chat API check failed: HTTP {response.status_code} {snippet}"
+                f"Triton AI API check failed: HTTP {response.status_code} {snippet}"
             )
 
         try:
             response.json()
         except ValueError as exc:
             raise RuntimeError(
-                "Illinois Chat API returned a non-JSON body; check illinois_chat_url."
+                "Triton AI API returned a non-JSON body; check triton_ai_url."
             ) from exc
 
         logging.info("Chat API connection verified.")
 
 def parse_command_line():
     parser = argparse.ArgumentParser(
-        description="HPC-GPT Documentation retrieval MCP server",
+        description="hpcGPT Documentation retrieval MCP server",
         formatter_class=RichHelpFormatter,
     )
     parser.add_argument("-c", "--config",
@@ -152,17 +152,17 @@ def parse_command_line():
         type=int,
         help="Option to set the port the server will listen on.",
     )
-    parser.add_argument("--illinois-chat-url",
+    parser.add_argument("--triton-ai-url",
         type=str,
-        help="Option to set the URL of the Illinois Chat API.",
+        help="Option to set the URL of the Triton AI API.",
     )
-    parser.add_argument("--illinois-chat-api-key",
+    parser.add_argument("--triton-ai-api-key",
         type=str,
-        help="Option to set the API key of the Illinois Chat API.",
+        help="Option to set the API key of the Triton AI API.",
     )
-    parser.add_argument("--illinois-chat-model",
+    parser.add_argument("--triton-ai-model",
         type=str,
-        help="Option to set the Illinois Chat model name.",
+        help="Option to set the Triton AI model name.",
     )
     parser.add_argument("--log-file",
         type=str,
@@ -187,7 +187,7 @@ def main(args):
     )
     route_fastmcp_logs_to_root(file_log_level)
 
-    server = ChatMCP("Illinois Chat MCP Server", args)
+    server = ChatMCP("Triton AI MCP Server", args)
     server.verify_chat_connection()
     server.run(
         transport="streamable-http",
