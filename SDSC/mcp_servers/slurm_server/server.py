@@ -15,7 +15,7 @@ class SlurmMCP(FastMCP):
     def __init__(self, name: str, args: argparse.Namespace):
         super().__init__(name)
 
-        self.add_tool(self.accounts)
+        self.add_tool(self.expanse-client)
         self.add_tool(self.sinfo)
         self.add_tool(self.squeue)
         self.add_tool(self.scontrol)
@@ -43,17 +43,17 @@ class SlurmMCP(FastMCP):
 
         return result.stdout
 
-    async def accounts(self, username: str) -> str:
+    async def expanse-client(self, username: str) -> str:
         """
-        Run the accounts command with the given username and return the output.
+        Run the expanse-client command with the given username and return the output.
 
         Args:
-            username: The system username to run the accounts command for.
+            username: The system username to run the expanse-client command for.
 
         Returns:
-            The output of the accounts command.
+            The output of the expanse-client command.
         """
-        result = subprocess.run(["accounts", "-u", username], capture_output=True, text=True)
+        result = subprocess.run(["expanse-client user -p"], capture_output=True, text=True)
         return result.stdout
 
     async def sinfo(self, sinfo_args: str = "") -> str:

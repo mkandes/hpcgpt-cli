@@ -6,7 +6,7 @@ class Config(BaseModel):
         default="127.0.0.1", 
         description="The host ip address for the server to listen on")
     port: int = Field(
-        default=8001, 
+        default=8002, 
         description="The port for the server to listen on")
     log_file: str = Field(
         default="logs/Latest.log", 
