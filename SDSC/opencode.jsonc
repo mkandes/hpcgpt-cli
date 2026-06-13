@@ -1,26 +1,26 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "mode": {
-    "support": {
-      "model": "ncsahosted/Qwen/Qwen3-VL-32B-Instruct",
-      "prompt": "{file:./prompts/support.txt}",
-      "tools": {
-        "write": true,
-        "edit": true,
-        "bash": true
-      }
-    }
-  },
+
   "provider": {
-    "ncsahosted": {
+    "triton-ai": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "NCSA Hosted",
+      "name": "Triton AI",
       "options": {
-        "baseURL": "{env:NCSA_LLM_URL}"
+        "baseURL": "{env:TRITON_AI_LLM_URL}"
       },
       "models": {
-        "Qwen/Qwen3-VL-32B-Instruct": {
-          "name": "Qwen 3 32B Instruct",
+        "api-deepseek-v4-flash": {
+          "name": "Deepseek v4 Flash",
+          "options": {
+            "stream": true
+          },
+	"api-gemma-4-26b": {
+          "name": "Gemma 4 (26B)",
+          "options": {
+            "stream": true
+          },
+	"api-gpt-oss-120b": {
+          "name": "GPT-OSS (120B)",
           "options": {
             "stream": true
           }
@@ -28,25 +28,36 @@
       }
     }
   },
+  "agent": {
+    "support": {
+      "model": "triton-ai/api-deepseek-v4-flash",
+      "prompt": "{file:./prompts/support.txt}",
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false
+      }
+    }
+  },
   "mcp": {
-    "slurm-mcp-server": {
+    "slurm-server": {
       "type": "remote",
-      "url": "http://dt-hpcgpt:8001/mcp",
+      "url": "http://localhost:8001/mcp",
       "enabled": true
     },
-    "illinois-chat-server": {
+    "triton-ai-server": {
       "type": "remote", 
-      "url": "http://dt-hpcgpt:8002/mcp",
+      "url": "http://localhost:8002/mcp",
       "enabled": true
     },
-    "report-server": {
+    "jira-server": {
       "type": "remote",
-      "url": "http://dt-hpcgpt:8003/mcp", 
-      "enabled": true
+      "url": "http://localhost:8003/mcp", 
+      "enabled": falseapi-deepseek-v4-flash
     },
     "knowledge-base-server": {
       "type": "remote",
-      "url": "http://dt-hpcgpt:8004/mcp",
+      "url": "http://localhost:8004/mcp",
       "enabled": false
     }
   },
@@ -54,12 +65,12 @@
     "report": {
       // Description shown in the TUI
       "template": "{file:./prompts/report.txt}",
-      "description": "Report an issue to the Delta support team",
+      "description": "Report an issue to the Expanse support team",
       "agent": "support",
-      "model": "ncsahosted/Qwen/Qwen3-VL-32B-Instruct"
+      "model": "triton-ai/api-deepseek-v4-flash"
     }
   },
-  // I'm disabling sharing as i don't think this is a feature we want on Delta
+  // I'm disabling sharing as i don't think this is a feature we want on Expanse
   "share": "disabled",
   // Configure permissions to control what AI agents can do by default.
   "permission": {
