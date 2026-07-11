@@ -1,80 +1,69 @@
 {
   "$schema": "https://opencode.ai/config.json",
-
+  "autoupdate": false,
+  "enabled_providers": ["triton-ai"],
   "provider": {
     "triton-ai": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "Triton AI",
       "options": {
-        "baseURL": "{env:TRITON_AI_LLM_URL}"
+        "baseURL": "https://tritonai-api.ucsd.edu",
+        "apiKey": "{env:TRITON_AI_API_KEY}",
+        "litellmProxy": true,
+        "autoload": true
       },
       "models": {
         "api-deepseek-v4-flash": {
-          "name": "Deepseek v4 Flash",
-          "options": {
-            "stream": true
-          },
-	"api-gemma-4-26b": {
-          "name": "Gemma 4 (26B)",
-          "options": {
-            "stream": true
-          },
-	"api-gpt-oss-120b": {
-          "name": "GPT-OSS (120B)",
-          "options": {
-            "stream": true
-          }
+          "name": "Deepseek v4 Flash"
+        },
+        "api-gemma-4-31b": {
+          "name": "Gemma 4 (31B)"
+        },
+        "api-gpt-oss-120b": {
+          "name": "GPT-OSS (120B)"
         }
-      }
-    }
-  },
-  "agent": {
-    "support": {
-      "model": "triton-ai/api-deepseek-v4-flash",
-      "prompt": "{file:./prompts/support.txt}",
-      "tools": {
-        "write": false,
-        "edit": false,
-        "bash": false
-      }
-    }
-  },
-  "mcp": {
-    "slurm-server": {
-      "type": "remote",
-      "url": "http://localhost:8001/mcp",
-      "enabled": true
+      },
     },
-    "triton-ai-server": {
-      "type": "remote", 
-      "url": "http://localhost:8002/mcp",
-      "enabled": true
-    },
-    "jira-server": {
-      "type": "remote",
-      "url": "http://localhost:8003/mcp", 
-      "enabled": falseapi-deepseek-v4-flash
-    },
-    "knowledge-base-server": {
-      "type": "remote",
-      "url": "http://localhost:8004/mcp",
-      "enabled": false
-    }
   },
-  "command": {
-    "report": {
-      // Description shown in the TUI
-      "template": "{file:./prompts/report.txt}",
-      "description": "Report an issue to the Expanse support team",
-      "agent": "support",
-      "model": "triton-ai/api-deepseek-v4-flash"
-    }
-  },
-  // I'm disabling sharing as i don't think this is a feature we want on Expanse
-  "share": "disabled",
-  // Configure permissions to control what AI agents can do by default.
+  "model": "triton-ai/api-deepseek-v4-flash",
+  "small_model": "triton-ai/api-gemma-4-31b",
   "permission": {
-    "edit": "ask",
-    "bash": "ask"
-  }
+    "bash": "ask",
+    "edit": "deny",
+    "read": "allow",
+    "write": "deny",
+    "grep": "allow",
+    "glob": "allow",
+    "lsp": "deny",
+    "apply_patch": "deny",
+    "skill": "allow",
+    "todowrite": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "question": "allow",
+  },
+  "share": "disabled",
+  "agent": {
+    "build": { "disable": true },
+    "plan": { "disable": true },
+  },
+  "mode": {
+    "support": {
+      "tools": {
+        "bash": true,
+        "edit": false,
+        "read": true,
+        "write": false,
+        "grep": true,
+        "glob": true,
+        "lsp": false,
+        "apply_patch": false,
+        "skill": true,
+        "todowrite": false,
+        "webfetch": true,
+        "websearch": true,
+        "question": true,
+      }
+    }
+  },
 }

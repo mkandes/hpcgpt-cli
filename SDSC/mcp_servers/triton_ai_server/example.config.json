@@ -1,9 +1,0 @@
-{
-    "host": "127.0.0.1",
-    "port": 8001,
-    "log_file": "logs/Latest.log",
-    "triton_ai_url": "https://tritonai-api.ucsd.edu",
-    "triton_ai_api_key": "my_api_key",
-    "triton_ai_model": "api-deepseek-v4-flash",
-    "triton_ai_system_prompt": "You are a helpful assistant that can answer questions about Expanse, its user guide, and other related documentation. You are also able to answer questions about the software on Expanse."
-}

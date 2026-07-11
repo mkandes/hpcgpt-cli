@@ -1,4 +1,0 @@
-fastmcp
-requests
-pydantic>=2
-rich-argparse
