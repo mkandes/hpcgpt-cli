@@ -1,69 +1,80 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "build": {
+      "disable": true
+    },
+    "plan": {
+      "disable": true
+    },
+    "hpcgpt": {
+      "disable": false
+    },
+  },
   "autoupdate": false,
+  "default_agent": "hpcgpt",
   "enabled_providers": ["triton-ai"],
+  "experimental": {},
+  "model": "triton-ai/api-gemma-4-31b",
   "provider": {
+    "nrp": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "National Research Platform (NRP)",
+      "options": {
+        "baseURL": "https://ellm.nrp-nautilus.io/v1",
+        "apiKey": "{env:NRP_LLM_API_KEY}"
+      },
+      "models": {
+        "gemma": {
+          "name": "gemma-4-31b-it-qat-w4a16-ct"
+        },
+        "gemma-small": {
+          "name": "gemma-4-12B-it-qat-w4a16-ct"
+        },
+        "glm-5": {
+          "name": "glm-5.2-nvfp4"
+        },
+        "gpt-oss": {
+          "name": "gpt-oss-120b"
+        },
+        "kimi": {
+          "name": "kimi-k2.7-code"
+        },
+        "minimax-m2": {
+          "name": "minimax-m2.7"
+        },
+        "qwen3": {
+          "name": "qwen3.5-397b-a17b-fp8"
+        },
+        "qwen3-small": {
+          "name": "qwen3.6-27b"
+        },
+      },
+    },
     "triton-ai": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "Triton AI",
       "options": {
         "baseURL": "https://tritonai-api.ucsd.edu",
-        "apiKey": "{env:TRITON_AI_API_KEY}",
-        "litellmProxy": true,
-        "autoload": true
+        "apiKey": "{env:TRITON_AI_API_KEY}"
       },
       "models": {
         "api-deepseek-v4-flash": {
-          "name": "Deepseek v4 Flash"
+          "name": "deepseek-v4-flash"
         },
         "api-gemma-4-31b": {
-          "name": "Gemma 4 (31B)"
+          "name": "gemma-4-31b"
+        },
+        "api-glm-5.2": {
+          "name": "glm-5.2"
         },
         "api-gpt-oss-120b": {
-          "name": "GPT-OSS (120B)"
-        }
+          "name": "gpt-oss-120b"
+        },
       },
     },
   },
-  "model": "triton-ai/api-deepseek-v4-flash",
-  "small_model": "triton-ai/api-gemma-4-31b",
-  "permission": {
-    "bash": "ask",
-    "edit": "deny",
-    "read": "allow",
-    "write": "deny",
-    "grep": "allow",
-    "glob": "allow",
-    "lsp": "deny",
-    "apply_patch": "deny",
-    "skill": "allow",
-    "todowrite": "allow",
-    "webfetch": "allow",
-    "websearch": "allow",
-    "question": "allow",
-  },
   "share": "disabled",
-  "agent": {
-    "build": { "disable": true },
-    "plan": { "disable": true },
-  },
-  "mode": {
-    "support": {
-      "tools": {
-        "bash": true,
-        "edit": false,
-        "read": true,
-        "write": false,
-        "grep": true,
-        "glob": true,
-        "lsp": false,
-        "apply_patch": false,
-        "skill": true,
-        "todowrite": false,
-        "webfetch": true,
-        "websearch": true,
-        "question": true,
-      }
-    }
-  },
+  "snapshot": true,
+  "theme": "system",
 }
