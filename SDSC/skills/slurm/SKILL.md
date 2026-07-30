@@ -1,11 +1,10 @@
 ---
 name: slurm
 description: >
-  Learn how to use the Slurm Workload Manager, write batch job scripts,
-  debug common job submission and/or scheduling problems, and execute
-  its client commands such as sbatch, squeue, and scancel. Use when a
-  command-line call to a Slurm client command is required to respond to
-  a user prompt.
+  Use the Slurm Workload Manager, write batch job scripts, debug common
+  job submission and/or scheduling problems, and execute its client
+  commands such as sbatch, squeue, and scancel. Use when a command-line
+  call to a Slurm client command is required to respond to a user prompt.
 license: MIT
 compatibility: opencode
 metadata:
