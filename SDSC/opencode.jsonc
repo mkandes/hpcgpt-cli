@@ -76,7 +76,6 @@
   },
   "share": "disabled",
   "snapshot": true,
-  "theme": "system",
   "mcp": {
     "chat": {
         "type": "remote", 
